@@ -12,9 +12,9 @@ import ru.eremin.restwithspringjpa.model.dto.UserDTO;
 import ru.eremin.restwithspringjpa.repository.UserRepository;
 import ru.eremin.restwithspringjpa.service.UserService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -70,30 +70,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDTO> findAll() {
-        List<UserDTO> list = new ArrayList<>();
-        for (User user : userRepository.findAll()) {
-            list.add(userMapper.toDto(user));
-        }
-
-        return list;
-    }
-
-    @Override
-    @Transactional
-    public void delete(UserDTO userDTO) {
-        Long id = userDTO.id();
-        if (id == null) {
-            log.error("id is null, user cant be found");
-            throw new UserDoesNotExistException("id is null, user cant be found");
-        }
-
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isEmpty()) {
-            log.error("id {} not found", id);
-            throw new UserDoesNotExistException("User with id " + id + " not found");
-        }
-
-        userRepository.delete(optionalUser.get());
+        List<User> users = (List<User>) userRepository.findAll();
+        return users.stream().map(userMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
