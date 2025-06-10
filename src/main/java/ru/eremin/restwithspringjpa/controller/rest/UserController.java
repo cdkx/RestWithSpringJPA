@@ -17,11 +17,13 @@ import ru.eremin.restwithspringjpa.service.UserService;
 import java.util.List;
 
 import static ru.eremin.restwithspringjpa.consts.WebConsts.API;
+import static ru.eremin.restwithspringjpa.consts.WebConsts.USERS;
+import static ru.eremin.restwithspringjpa.consts.WebConsts.ID;
 
 
 @AllArgsConstructor
 @RestController
-@RequestMapping(API + "/users")
+@RequestMapping(API + USERS)
 public class UserController {
     private final UserService userService;
 
@@ -30,13 +32,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.findAll());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping(ID)
     public ResponseEntity<UserDTO> findUserById(@PathVariable Long id) {
         UserDTO foundUser = userService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(foundUser);
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping(value = ID)
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO, @PathVariable Long id) {
         UserDTO savedUserDto = userService.update(userDTO, id);
         return ResponseEntity.status(HttpStatus.OK).body(savedUserDto);
@@ -48,13 +50,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUserDto);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping(ID)
     public void deleteUserById(@PathVariable Long id) {
         userService.deleteById(id);
-    }
-
-    @DeleteMapping()
-    public void deleteUser(@RequestBody UserDTO userDTO) {
-        userService.delete(userDTO);
     }
 }
