@@ -16,9 +16,7 @@ import ru.eremin.restwithspringjpa.service.UserService;
 
 import java.util.List;
 
-import static ru.eremin.restwithspringjpa.consts.WebConsts.API;
-import static ru.eremin.restwithspringjpa.consts.WebConsts.USERS;
-import static ru.eremin.restwithspringjpa.consts.WebConsts.ID;
+import static ru.eremin.restwithspringjpa.consts.WebConsts.*;
 
 
 @AllArgsConstructor
@@ -35,6 +33,12 @@ public class UserController {
     @GetMapping(ID)
     public ResponseEntity<UserDTO> findUserById(@PathVariable Long id) {
         UserDTO foundUser = userService.findById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(foundUser);
+    }
+
+    @GetMapping(EMAILS + EMAIL)
+    public ResponseEntity<UserDTO> findUserByEmail(@PathVariable String email) {
+        UserDTO foundUser = userService.findByEmail(email);
         return ResponseEntity.status(HttpStatus.OK).body(foundUser);
     }
 

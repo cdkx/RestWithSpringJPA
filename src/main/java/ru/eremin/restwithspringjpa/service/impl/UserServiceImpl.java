@@ -58,6 +58,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDTO findById(Long id) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
@@ -69,6 +70,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public UserDTO findByEmail(String email) {
+        Optional<User> optionalUser = userRepository.findUserByEmail(email);
+        if (optionalUser.isEmpty()) {
+            log.error("user with email {} not found", email);
+            throw new UserDoesNotExistException("User with email " + email + " not found");
+        }
+
+        return userMapper.toDto(optionalUser.get());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<UserDTO> findAll() {
         List<User> users = (List<User>) userRepository.findAll();
         return users.stream().map(userMapper::toDto).collect(Collectors.toList());

@@ -16,28 +16,70 @@
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
-							"});"
+							"});",
+							"var template = `",
+							"<style type=\"text/css\">",
+							"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+							"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+							"    .tftable tr {background-color:#ffffff;}",
+							"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+							"    .tftable tr:hover {background-color:#e0ffff;}",
+							"</style>",
+							"",
+							"<table class=\"tftable\" border=\"1\">",
+							"    <tr>",
+							"        <th>ID</th>",
+							"        <th>Name</th>",
+							"        <th>Email</th>",
+							"        <th>Age</th>",
+							"    </tr>",
+							"    ",
+							"    {{#each response}}",
+							"        <tr>",
+							"            <td>{{id}}</td>",
+							"            <td>{{name}}</td>",
+							"            <td>{{email}}</td>",
+							"            <td>{{age}}</td>",
+							"        </tr>",
+							"    {{/each}}",
+							"</table>",
+							"`;",
+							"",
+							"function constructVisualizerPayload() {",
+							"    return { response: pm.response.json() };",
+							"}",
+							"",
+							"pm.visualizer.set(template, constructVisualizerPayload());"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": {
-					"raw": "{{base_url}}/info?id=1",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"info"
-					],
-					"query": [
-						{
-							"key": "id",
-							"value": "1"
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
 						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/myapp/api/v1/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"myapp",
+						"api",
+						"v1",
+						"users"
 					]
 				},
 				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
@@ -55,7 +97,8 @@
 							"    pm.response.to.have.status(200);",
 							"});"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -63,18 +106,57 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/info?id=1",
+					"raw": "http://localhost:8080/myapp/api/v1/users/3",
+					"protocol": "http",
 					"host": [
-						"{{base_url}}"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
-						"info"
+						"myapp",
+						"api",
+						"v1",
+						"users",
+						"3"
+					]
+				},
+				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+			},
+			"response": []
+		},
+		{
+			"name": "Get user by Email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/myapp/api/v1/users/emails/email15",
+					"protocol": "http",
+					"host": [
+						"localhost"
 					],
-					"query": [
-						{
-							"key": "id",
-							"value": "1"
-						}
+					"port": "8080",
+					"path": [
+						"myapp",
+						"api",
+						"v1",
+						"users",
+						"emails",
+						"email15"
 					]
 				},
 				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
@@ -93,7 +175,8 @@
 							"});",
 							""
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -102,7 +185,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
+					"raw": "{\n\t\"name\": \"Add your name in the body\",\n    \"email\": \"email1110\",\n    \"age\": 335\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -110,12 +193,17 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/info",
+					"raw": "http://localhost:8080/myapp/api/v1/users",
+					"protocol": "http",
 					"host": [
-						"{{base_url}}"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
-						"info"
+						"myapp",
+						"api",
+						"v1",
+						"users"
 					]
 				},
 				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
@@ -144,7 +232,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"name\": \"updated name userid5\",\n    \"email\": \"updated email userid5\",\n    \"age\": 135\n}",
+					"raw": "{\n        \"name\": \"Add your name in the body\",\n        \"email\": \"email2\",\n        \"age\": 335\n    }",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -152,7 +240,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/myapp/api/v1/users/5",
+					"raw": "http://localhost:8080/myapp/api/v1/users/15",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -163,7 +251,7 @@
 						"api",
 						"v1",
 						"users",
-						"5"
+						"15"
 					]
 				},
 				"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
@@ -182,7 +270,8 @@
 							"});",
 							""
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -199,65 +288,18 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/info?id=1",
+					"raw": "http://localhost:8080/myapp/api/v1/users/14",
+					"protocol": "http",
 					"host": [
-						"{{base_url}}"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
-						"info"
-					],
-					"query": [
-						{
-							"key": "id",
-							"value": "1"
-						}
-					]
-				},
-				"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
-			},
-			"response": []
-		},
-		{
-			"name": "Delete user",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							"pm.test(\"Successful DELETE request\", function () {",
-							"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
-							"});",
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{base_url}}/info?id=1",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"info"
-					],
-					"query": [
-						{
-							"key": "id",
-							"value": "1"
-						}
+						"myapp",
+						"api",
+						"v1",
+						"users",
+						"14"
 					]
 				},
 				"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
