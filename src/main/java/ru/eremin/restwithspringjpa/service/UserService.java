@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface UserService {
 
-    UserDTO save(UserDTO userDTO) ;
+    UserDTO save(UserDTO userDTO);
 
     UserDTO update(UserDTO userDTO, Long id);
 
@@ -19,4 +19,3 @@ public interface UserService {
 
     void deleteById(Long id);
 }
-
