@@ -10,4 +10,6 @@ public class WebConsts {
     public static final String ID = "/{id}";
     public static final String EMAILS = "/emails";
     public static final String EMAIL = "/{email}";
+    public static final String USER_CREATED = "User created.";
+    public static final String USER_DELETED = "User deleted.";
 }

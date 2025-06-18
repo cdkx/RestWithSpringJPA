@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.eremin.restwithspringjpa.exception.UserAlreadyExistsException;
 import ru.eremin.restwithspringjpa.exception.UserDoesNotExistException;
+import ru.eremin.restwithspringjpa.kafka.KafkaProducer;
 import ru.eremin.restwithspringjpa.mapper.AbstractMapper;
 import ru.eremin.restwithspringjpa.model.User;
 import ru.eremin.restwithspringjpa.model.dto.UserDTO;
@@ -16,6 +17,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static ru.eremin.restwithspringjpa.consts.WebConsts.USER_CREATED;
+import static ru.eremin.restwithspringjpa.consts.WebConsts.USER_DELETED;
+
 
 @Slf4j
 @AllArgsConstructor
@@ -23,6 +27,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final AbstractMapper<User, UserDTO> userMapper;
     private final UserRepository userRepository;
+    private final KafkaProducer kafkaProducer;
 
     @Override
     @Transactional
@@ -38,7 +43,13 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userMapper.toEntity(userDTO);
-        return userMapper.toDto(userRepository.save(user));
+        user = userRepository.save(user);
+        log.info("user saved {}", userDTO);
+
+        kafkaProducer.sendMessage(email, USER_CREATED);
+        log.info("message {} sent to kafka", email);
+
+        return userMapper.toDto(user);
     }
 
     @Override
@@ -97,6 +108,17 @@ public class UserServiceImpl implements UserService {
             throw new UserDoesNotExistException("User with id " + id + " not found");
         }
 
+        Optional<User> user = userRepository.findById(id);
+        String email = "";
+        if (user.isPresent()) {
+            email = user.get().getEmail();
+            log.info("email found {}", email);
+        }
+
         userRepository.deleteById(id);
+        if (!email.isEmpty()) {
+            kafkaProducer.sendMessage(email, USER_DELETED);
+            log.info("message {} sent to kafka", email);
+        }
     }
 }
