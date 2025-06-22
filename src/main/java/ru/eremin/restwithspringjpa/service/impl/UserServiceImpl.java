@@ -17,9 +17,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static ru.eremin.restwithspringjpa.consts.WebConsts.USER_CREATED;
-import static ru.eremin.restwithspringjpa.consts.WebConsts.USER_DELETED;
-
 
 @Slf4j
 @AllArgsConstructor
@@ -28,6 +25,8 @@ public class UserServiceImpl implements UserService {
     private final AbstractMapper<User, UserDTO> userMapper;
     private final UserRepository userRepository;
     private final KafkaProducer kafkaProducer;
+    public static final String USER_CREATED = "User created.";
+    public static final String USER_DELETED = "User deleted.";
 
     @Override
     @Transactional

@@ -23,7 +23,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static ru.eremin.restwithspringjpa.consts.WebConsts.*;
 
 
 @SpringBootTest
@@ -55,7 +54,7 @@ public class UserControllerTest {
     void findUsers_ShouldReturnAllUsers() throws Exception {
         when(userService.findAll()).thenReturn(userList);
 
-        mockMvc.perform(get(API + USERS))
+        mockMvc.perform(get("/api/v1/users"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -73,7 +72,7 @@ public class UserControllerTest {
     void findUserById_ShouldReturnUser() throws Exception {
         when(userService.findById(1L)).thenReturn(testUser1);
 
-        mockMvc.perform(get(API + USERS + ID, 1))
+        mockMvc.perform(get("/api/v1/users/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(1)))
@@ -86,7 +85,7 @@ public class UserControllerTest {
     void findUserByEmail_ShouldReturnUser() throws Exception {
         when(userService.findByEmail("Vasya@example.com")).thenReturn(testUser1);
 
-        mockMvc.perform(get(API + USERS + EMAILS + EMAIL, "Vasya@example.com"))
+        mockMvc.perform(get("/api/v1/users/emails/{email}", "Vasya@example.com"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(1)))
@@ -100,7 +99,7 @@ public class UserControllerTest {
         UserDTO updatedUser = new UserDTO(1L, "Vasya Updated", "VasyaUpdated@example.com", 31);
         when(userService.update(any(UserDTO.class), anyLong())).thenReturn(updatedUser);
 
-        mockMvc.perform(put(API + USERS + ID, 1)
+        mockMvc.perform(put("/api/v1/users/{id}", 1)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testUser1)))
                 .andExpect(status().isOk())
@@ -115,7 +114,7 @@ public class UserControllerTest {
     void createUser_ShouldReturnCreatedUser() throws Exception {
         when(userService.save(any(UserDTO.class))).thenReturn(testUser1);
 
-        mockMvc.perform(post(API + USERS)
+        mockMvc.perform(post("/api/v1/users")
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testUser1)))
                 .andExpect(status().isCreated())
@@ -130,6 +129,6 @@ public class UserControllerTest {
     void deleteUserById_ShouldReturnNoContent() throws Exception {
         doNothing().when(userService).deleteById(anyLong());
 
-        mockMvc.perform(delete(API + USERS + ID, 1)).andExpect(status().isOk());
+        mockMvc.perform(delete("/api/v1/users/{id}", 1)).andExpect(status().isOk());
     }
 }
