@@ -19,6 +19,7 @@
         <java.version>17</java.version>
         <org.mapstruct>1.6.3</org.mapstruct>
         <lombok-mapstruct-binding>0.2.0</lombok-mapstruct-binding>
+        <org.springdoc>2.8.9</org.springdoc>
     </properties>
 
     <dependencies>
@@ -30,6 +31,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${org.springdoc}</version>
         </dependency>
 
         <dependency>

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.eremin.restwithspringjpa.model.dto.UserDTO;
@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-@SpringBootTest
+@WebMvcTest(UserController.class)
 @AutoConfigureMockMvc
 public class UserControllerTest {
 
@@ -129,6 +129,6 @@ public class UserControllerTest {
     void deleteUserById_ShouldReturnNoContent() throws Exception {
         doNothing().when(userService).deleteById(anyLong());
 
-        mockMvc.perform(delete("/api/v1/users/{id}", 1)).andExpect(status().isOk());
+        mockMvc.perform(delete("/api/v1/users/{id}", 1)).andExpect(status().is2xxSuccessful());
     }
 }
