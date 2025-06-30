@@ -9,6 +9,7 @@ import ru.eremin.restwithspringjpa.exception.UserDoesNotExistException;
 import ru.eremin.restwithspringjpa.kafka.KafkaProducer;
 import ru.eremin.restwithspringjpa.mapper.AbstractMapper;
 import ru.eremin.restwithspringjpa.model.User;
+import ru.eremin.restwithspringjpa.model.dto.PostDTO;
 import ru.eremin.restwithspringjpa.model.dto.UserDTO;
 import ru.eremin.restwithspringjpa.repository.UserRepository;
 import ru.eremin.restwithspringjpa.service.UserService;
@@ -16,6 +17,9 @@ import ru.eremin.restwithspringjpa.service.UserService;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static ru.eremin.restwithspringjpa.model.Operation.CREATE;
+import static ru.eremin.restwithspringjpa.model.Operation.DELETE;
 
 
 @Slf4j
@@ -25,8 +29,7 @@ public class UserServiceImpl implements UserService {
     private final AbstractMapper<User, UserDTO> userMapper;
     private final UserRepository userRepository;
     private final KafkaProducer kafkaProducer;
-    public static final String USER_CREATED = "User created.";
-    public static final String USER_DELETED = "User deleted.";
+
 
     @Override
     @Transactional
@@ -45,7 +48,7 @@ public class UserServiceImpl implements UserService {
         user = userRepository.save(user);
         log.info("user saved {}", userDTO);
 
-        kafkaProducer.sendMessage(email, USER_CREATED);
+        kafkaProducer.sendMessage(new PostDTO(email, CREATE));
         log.info("message {} sent to kafka", email);
 
         return userMapper.toDto(user);
@@ -107,17 +110,15 @@ public class UserServiceImpl implements UserService {
             throw new UserDoesNotExistException("User with id " + id + " not found");
         }
 
-        Optional<User> user = userRepository.findById(id);
-        String email = "";
-        if (user.isPresent()) {
-            email = user.get().getEmail();
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            String email = user.getEmail();
             log.info("email found {}", email);
+            kafkaProducer.sendMessage(new PostDTO(email, DELETE));
+            log.info("message {} sent to kafka", email);
         }
 
         userRepository.deleteById(id);
-        if (!email.isEmpty()) {
-            kafkaProducer.sendMessage(email, USER_DELETED);
-            log.info("message {} sent to kafka", email);
-        }
     }
 }
